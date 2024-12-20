@@ -49,8 +49,8 @@ impl Simulation {
     
     fn update_redshift(&mut self, dt: f64) {
         let a = 1.0 / (1.0 + self.redshift);
-        let h = self.h * 100.0;
-        let da_dt = h * a *(self.omega_m * a.powi(-3) + self.omega_lambda).sqrt();
+        let h0 = self.h * 100.0 / 20.738652969925447;;
+        let da_dt = h0 * a *(self.omega_m * a.powi(-3) + self.omega_lambda).sqrt();
         let new_a = a + da_dt * dt;
         self.redshift = 1.0 / new_a - 1.0;
     }
