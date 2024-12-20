@@ -5,7 +5,7 @@ use hdf5::{Datatype, Dataspace};
 use hdf5::Extents::{Null, Simple};
 use hdf5::types;
 use hdf5::SimpleExtents;
-use ndarray::{array, Array, Array1, Array2, ArrayBase, ArrayView};
+use ndarray::{array, Array, Array1, Array2, ArrayBase, ArrayView, Ix2, IxDyn, OwnedRepr};
 
 //pub fn write_header_attributes_in_hdf5(hdf5::)
 
@@ -48,14 +48,19 @@ pub fn output_to_hdf5(simulation: &Simulation, filename: &str) -> Result<()> {
 
     let particles_group = file.create_group("PartType1")?;
 
+    //Writing out particle positions
+    //let hdf5_dataspace = Dataspace::try_new(Simple(SimpleExtents::from(Extent::fixed(2))));
     let num_particles = simulation.particles.len();
-    let dims = [num_particles, 3];
-    let mut data: Vec<f64> = simulation.particles.iter()
-        .flat_map(|p| [p.pos.x, p.pos.y, p.pos.z])
+    let dims= [num_particles, 3];
+    let mut data: Vec<f32> = simulation.particles.iter()
+        .flat_map(|p| [p.pos.x as f32, p.pos.y as f32, p.pos.z as f32])
         .collect();
-    let mut array = Array2::from_shape_vec(dims, data)?;
+    let mut array: ArrayBase<OwnedRepr<f32>, Ix2> = Array2::from_shape_vec(dims, data)?;
     
-    let dataset = particles_group.new_dataset::<f64>().shape(dims).create(&array)?;
+    let dataset = particles_group.new_dataset::<f32>().shape(dims).create("Coordinates")?;
+    dataset.write(&array)?;
+    
+    //Writing out 
     /*
     header_group.new_attr::<i32>().create("Flag_Cooling")?.write_scalar(&0)?;
     header_group.new_attr::<[u32; 6]>().create("Flag_Entropy_ICs")?.write(&[0; 6])?;
