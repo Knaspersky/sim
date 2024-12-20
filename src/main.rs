@@ -10,8 +10,8 @@ use visualization::output_particle_positions;
 use crate::visualization::output_to_hdf5;
 
 fn main() {
-    let n_particles = 10000;
-    let box_size = 1000.0;
+    let n_particles = 1000000;
+    let box_size = 100000.0;
     let n_steps = 100;
     let dt = 0.01;
     let initial_redshift = 63.0;
